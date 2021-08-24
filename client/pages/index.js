@@ -8,10 +8,11 @@ import { auth, db } from '../firebase';
 import { useCollection } from 'react-firebase-hooks/firestore'
 
 export default function Home({ user }) {
+  // Chatbox state
   const [isChatOpen, setIsChatOpen] = useState(false);
   const handleChat = () => {
-    setIsChatOpen(true);
-  }
+    setIsChatOpen(!isChatOpen);
+  };
   
   return (
     <div className={styles.container}>
@@ -23,7 +24,6 @@ export default function Home({ user }) {
       <button onClick={handleChat}>Messagerie</button>
       {isChatOpen && (
         !user ? <Login /> : <Chat user={user} auth={auth} db={db} />
-       
       )}
     </div>
   )
