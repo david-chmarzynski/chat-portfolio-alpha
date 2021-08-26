@@ -13,7 +13,6 @@ function MyApp({ Component, pageProps }) {
   const [user, loading, error] = useAuthState(auth);
   useEffect(() => {
     if(user) {
-      console.log(user);
       db.collection("users").doc(user.uid).set({
         email: user.email,
         lastSeen: firebase.firestore.FieldValue.serverTimestamp(),

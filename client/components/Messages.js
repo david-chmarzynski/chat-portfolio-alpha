@@ -1,9 +1,28 @@
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import { useCollection } from 'react-firebase-hooks/firestore';
+import firebase from 'firebase/app'
 
-export default function Messages({ user, auth, db }) {
+export default function Messages({ user, auth, db, setIsChatOpen }) {
     const userChatRef = db.collection('chats').where('users', 'array-contains', user.email);
     const [chatsSnapshot, loading, error] = useCollection(userChatRef);
+    const [input, setInput] = useState("");
+    console.log(db.collection('chats').doc().id)
+
+    const handleInput = (e) => {
+        e.preventDefault();
+        setInput(e.target.value);
+    };
+
+    const sendMessage = (e, input) => {
+        e.preventDefault();
+        
+        // Update last seen
+        db.collection('users').doc(user.uid).set({
+            lastSeen: firebase.firestore.FieldValue.serverTimestamp()
+        }, { merge: true });
+
+        // db.collection('chats').doc()
+    }
 
     const chatAlreadyExist = (recipientEmail) => (
         !!chatsSnapshot?.docs.find(chat => 
@@ -18,18 +37,17 @@ export default function Messages({ user, auth, db }) {
             users: [user.email, me]
             });
         } else if(me !== user.email && chatAlreadyExist(me)) {
-            setIsOpen(true);
+            setIsChatOpen(true);
         }
     };
 
-    useEffect(() => {
-        console.log("useEffect");
-        createChat();
-    }, [user])
     return (
         <div className="messages">
             <h3>Messages</h3>
+            <button onClick={createChat}>Créer un chat</button>
             <h4>Conversation avec {user.email}</h4>
+            <input type="text" onChange={handleInput}/>
+            <button onClick={(e) => sendMessage(e, input)}>Envoyer</button>
         </div>
     )
 }

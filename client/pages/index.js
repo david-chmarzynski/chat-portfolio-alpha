@@ -23,7 +23,7 @@ export default function Home({ user }) {
       </Head>
       <button onClick={handleChat}>Messagerie</button>
       {isChatOpen && (
-        !user ? <Login /> : <Chat user={user} auth={auth} db={db} />
+        !user ? <Login /> : <Chat user={user} auth={auth} db={db} setIsChatOpen={setIsChatOpen}/>
       )}
     </div>
   )
